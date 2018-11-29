@@ -28,7 +28,7 @@ Reference :
 **********  ENVIRONMENT CONFIGURATION  **********
 *************************************************
 
-1 - Go to the official miniconda download page : https://conda.io/miniconda.html
+1 - Go to the official miniconda (3.7) download page : https://conda.io/miniconda.html
 
 2 - Download the version of miniconda adapted to your system.
 
