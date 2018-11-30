@@ -28,27 +28,31 @@ Reference :
 **********  ENVIRONMENT CONFIGURATION  **********
 *************************************************
 
-1 - Go to the official miniconda (3.7) download page : https://conda.io/miniconda.html
+Disclaimer : The current version of the program installation process only supports the Windows platform.
 
-2 - Download the version of miniconda adapted to your system.
+1 - Go to the official miniconda download page : https://conda.io/miniconda.html
 
-3 - Run the installer you just downloaded.
+2 - Download the version of python3/miniconda adapted to your system.
 
-4 - When prompted to add anaconda to your path environment and to register anaconda as your default Python X.X, check the boxes and click “install”
+3 - As an administrator, run the installer you just downloaded.
+
+4 - When prompted to add anaconda to your path environment and to register anaconda as your default Python 3.X, check the boxes and click “install”
 
 5 - Once the installation is completed, you should be able to launch these two commands in a cmd.exe  :
 
         python -V : should display the version of python you just installed
         conda -V : should display the version of conda you just installed   
-        
-6 - You should then update conda by running this command : 
+
+6 - You should then update conda by running this command :
 
         conda update conda
-        
+    NB : conda commands may take a fair amount of time to complete 
+    
 7 - Run this command : 
 
         conda install --file {spec-file-path}
-        where {spec-file-path} is the path to the specification file included in this bundle. 
-        Make sure you are using the spec file which is compliant with your installation of miniconda.
-        
-8 - Your newly installed python/miniconda is now able to run this project. 
+       
+    where {spec-file-path} is the path to the specification file included in this bundle. 
+    Make sure you are using the specification file which is compliant with your installation of miniconda. 
+    
+8 - Your newly installed python/miniconda is now able to run this project. To do so you simply have to run placeholder.bat. 
