@@ -13,6 +13,7 @@ Python is open source and royalty-free.
 -> https://wiki.python.org/moin/BeginnersGuide
 
 Created on Fri Oct 26 18:34:27 2018
+
 @author: François Blondeau (European Commisssion, Directorate-General for Economic and Financial Affairs)
 
 Reference :
