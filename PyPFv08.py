@@ -52,9 +52,10 @@ import statsmodels.api as sm
 from statsmodels.tsa.arima_model import ARIMA
 #import matplotlib.pylab as plt
 from scipy.optimize import fsolve
+#import warnings
+#warnings.filterwarnings("ignore")
 
 # Function created to estimate AR using OLS instead of the default Python ML
-
 def ols_ar(series, nblag, const, ar_start, changey, nb_fcst, time=False):   
     endog = series.loc[ar_start:changey]
     if nblag > 0:
@@ -68,12 +69,11 @@ def ols_ar(series, nblag, const, ar_start, changey, nb_fcst, time=False):
         if time:
             exog['time'] = pd.Series(series.index[ar_start-1960:changey-1959], index=exog.index)
     else:
- #       n = len(series.loc[ar_start:changey])
         exog=pd.DataFrame(index=range(ar_start,changey+1))
         exog['const'] = np.ones(changey+1-ar_start)
     model = sm.OLS(endog, exog, missing='drop') 
     res = model.fit() 
-    print(res.summary()) 
+    #print(res.summary()) 
     for i in range(1, nb_fcst + 1): 
         if const: 
             newexog = pd.DataFrame([1.], columns=['const'])
@@ -85,7 +85,7 @@ def ols_ar(series, nblag, const, ar_start, changey, nb_fcst, time=False):
                 newexog['lag'+str(lag)] = series[changey-lag+i] 
         if time:
             newexog['time'] = pd.Series(series.index[changey-1960+i], index=newexog.index)
-            print(newexog)
+            #print(newexog)
         series[changey+i] = res.predict(newexog) 
     return series.loc[:changey+nb_fcst]
 
@@ -154,6 +154,7 @@ europop.index = europop.index.astype('int64')
 outputfile = ExcelWriter(PrgParams.loc['outFile','value'])
 seriesofOnes.loc[OutStartYear:changey+yf].to_excel(outputfile, sheet_name='PyPF Output',startcol=0, index=True, index_label='YEAR')
 excelcolumn = 1
+dicInterface = {}
 
 #DEBUG 
 #countrylist = ['at', 'be','de','dk','el','es','fr','ie','it','lu','nl','pt','fi','se','uk','cz','ee','hu','lv','lt','pl','sk','si','cy','mt','bg','ro','hr']
@@ -164,9 +165,9 @@ excelcolumn = 1
 #DEBUG END
 
 for country in CountryParams.columns[2:]:
-    print('\n\n - -  - - - -  - - - - - -   - - -  - -- -')
-    print(country,' - ',country,' - ',country,' - ',country,' - ',country,' - ',country)
-    print(' - -  - - - -  - - - - - -   - - -  - -- -')
+    #print('\n\n - -  - - - -  - - - - - -   - - -  - -- -')
+    #print(country,' - ',country,' - ',country,' - ',country,' - ',country,' - ',country)
+    #print(' - -  - - - -  - - - - - -   - - -  - -- -')
   
 # the needed data is then put in arrays (Pandas series) or computed if needed
 #
@@ -301,7 +302,7 @@ for country in CountryParams.columns[2:]:
 # -----------
     wsr = sr.diff()
 
-    print('\nExtending WSR :\n---------------')    
+    #print('\nExtending WSR :\n---------------')    
 
 # for the moment (AF2018) ARIMA estimation is used for 6 countries
 #TODO : ARIMA is estimated with Python MLE instead of RATS LS Gauss-Newton
@@ -318,8 +319,8 @@ for country in CountryParams.columns[2:]:
 # ARIMA requests that index is "datetime tagded"
         wsr.index = pd.to_datetime(wsr.index, format='%Y', exact=True)
         model = ARIMA(wsr.loc[str(ar_start):str(changey)], order=(p,d,q), freq='AS-JAN')
-        model_fit = model.fit(trend=const)
-        print(model_fit.summary())
+        model_fit = model.fit(trend=const, disp=False)
+        #print(model_fit.summary())
         forecast = model_fit.predict(start=str(changey+1), end=str(endy))
         wsr.loc[str(changey+1):str(endy)] = forecast.loc[str(changey+1):str(endy)]
         wsr=wsr.values * seriesofOnes
@@ -420,7 +421,7 @@ for country in CountryParams.columns[2:]:
     elif country == 'hr':
         starthp = 2001
         
-    print('\nExtending PART :\n----------------')
+    #print('\nExtending PART :\n----------------')
     time = bool(int(CountryParams.loc['part_timexog', country]))
     part = ols_ar(part, nblag, const, ar_start, changey, yf, time)
 # filter the forecasted series
@@ -481,7 +482,7 @@ for country in CountryParams.columns[2:]:
     const=bool(int(CountryParams.loc['hpere_const', country]))
     ar_start = int(CountryParams.loc['hpere_ar_start', country])
 
-    print('\nExtending HPERE :\n-----------------')
+    #print('\nExtending HPERE :\n-----------------')
     hpere = ols_ar(hpere, nblag, const, ar_start, changey, yf)
 
 # TODO : HP SHOULD DEAL WITH SHORTER SERIES (CY, HR)    
@@ -558,7 +559,7 @@ for country in CountryParams.columns[2:]:
     const=bool(int(CountryParams.loc['iypot_const', country]))
     ar_start = int(CountryParams.loc['iypot_ar_start', country])
     
-    print('\nExtending IYPOT :\n-----------------')
+    #print('\nExtending IYPOT :\n-----------------')
     iypot = ols_ar(iypot, nblag, const, ar_start, changey, yf)
 
 # Depreciation rate (dep)
@@ -634,7 +635,7 @@ for country in CountryParams.columns[2:]:
         params = [totalhs[changey+i], srkf[changey+i], dep[changey+i], k[changey+i-1], iypot[changey+i], ygap[changey+i], totalh_mt[changey+i]]
         x0 = fsolve(modeltosolve, x0, params)
         ypot[changey+i], k[changey+i], iq[changey+i], y[changey+i], sr[changey+i] = x0
-        print("Computed values for year ", changey+i, "(ypot, k, iq, y, sr) :\n", x0)
+        #print("Computed values for year ", changey+i, "(ypot, k, iq, y, sr) :\n", x0)
 
     wsr = sr.diff()
 
@@ -701,9 +702,11 @@ for country in CountryParams.columns[2:]:
 
     excelcolumn += 24
 #    output.loc[1965:2025].to_csv('PyPF_Output.csv')
+    dicInterface[country]=((output.filter(regex='GAP')).loc[2018:2020]).to_dict()
 
 outputfile.save()
-print("\nTime spend for the computations : ", np.datetime64(datetime.datetime.now())-current1)
+
+#print("\nTime spend for the computations : ", np.datetime64(datetime.datetime.now())-current1)
 
 #############################
 # DEBUG

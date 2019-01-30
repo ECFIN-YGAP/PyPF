@@ -1,0 +1,19 @@
+Description 1,Description 2,code,ALL
+TFP ARIMA EXTENSION,Order of AR model (p),tfp_nblag,10
+,Order of MA model (q),tfp_ma_order,10
+,use of a constant,tfp_const,10
+,Start of AR process analysis,tfp_ar_start,2020
+TFP HP FILTERING,Lambda,tfp_lambda,500
+PART AR EXTENSION,Order of AR model (p),part_nblag,10
+,use of a constant,part_const,10
+,use of time as exogenous value,part_timexog,10
+,Start of AR process analysis,part_ar_start,2020
+PART HP FILTERING,Lambda,part_lambda,100
+HPERE AR EXTENSION,Order of AR model (p),hpere_nblag,10
+,use of a constant,hpere_const,10
+,Start of AR process analysis,hpere_ar_start,2019
+HPERE HP FILTERING,Lambda,hpere_lambda,300
+IYPOT AR EXTENTION,Order of AR model (p),iypot_nblag,11
+,use of a constant,iypot_const,21
+,Start of AR process analysis,iypot_ar_start,2020
+HP FILTERING,General starting year of filtering,starthp,2020
