@@ -56,4 +56,4 @@ Disclaimer : The current version of the program installation process only suppor
     where {spec-file-path} is the path to the specification file included in this bundle. 
     Make sure you are using the specification file which is compliant with your installation of miniconda. 
     
-8 - Your newly installed python/miniconda is now able to run this project. To do so you simply have to run placeholder.bat. 
+8 - Your newly installed python/miniconda is now able to run this project. To do so you simply have to run "PyPF.bat". 
