@@ -1,0 +1,63 @@
+&ssm
+ maxintord = 2 nonstatstate = 2 estimation = ML stderr = hes
+ endogenous(1) = 'LUR(0) = uP(0) + uG(0)'
+ endogenous(2) = 'DWS(0) = muw/(1-phiw1)*CONST(0) + beta0*uGtil(0) + beta0*(phiw1-0.99)/(phiw1*0.99-1.0)*phiG2*uGtil(-1) + cw(0) ' 
+ states(1) = 'uP(0)  = uP(-1) + uslope(-1) + auP(0)'  
+ states(2) = 'uslope(0) = uslope(-1) + auslope(0)'
+ states(3) = 'uG(0) =  phiG1*uG(-1) + phiG2*uG(-2) + auG(0)'
+ states(4) = 'uGtil(0) = phiw1*uGtil(-1) + uG(0)'
+ states(5) = 'cw(0) = phiw1*cw(-1) + aw(0) ' 
+ shocks = 'aw, auP, auslope, auG'
+ std = 'sqrt(Vw), sqrt(VuP), sqrt(Vuslope), sqrt(VuG)'
+ exogenous = 'CONST'
+&end
+&prior
+ lab(1)  = phiG1   pdf(1) = NT hyp(1, 1) = 0 hyp(2,1) = 0 hyp(3,1) = -1.96 hyp(4,1) = 1.96
+ lab(2)  = phiG2   pdf(2) = NT hyp(1, 2) = 0 hyp(2,2) = 0 hyp(3,2) = -0.97 hyp(4,2) = 0.97
+ lab(3)  = Vuslope pdf(3) = IG hyp(1, 3) = 0 hyp(2,3) = 0 hyp(3,3) = 0.15 hyp(4,3) = 0.2
+ lab(4)  = VuP     pdf(4) = IG hyp(1, 4) = 0 hyp(2,4) = 0 hyp(3,4) = 0.00000001 hyp(4,4) = 0.2
+ lab(5)  = VuG     pdf(5) = IG hyp(1, 5) = 0 hyp(2,5) = 0 hyp(3,5) = 0.00000001 hyp(4,5) = 1.05
+ lab(6)  = rhopic  pdf(6) = BE hyp(1, 6) = 0 hyp(2,6) = 0 hyp(3,6) = 0 hyp(4,6) = 0 
+ lab(7)  = beta0   pdf(7) = NT hyp(1, 7) = 0 hyp(2,7) = 0 hyp(3,7) = -2 hyp(4,7) = 0
+ lab(8)   = beta1   pdf(8) = NT hyp(1, 8) = 0 hyp(2,8) = 0 hyp(3,8) = 0 hyp(4,8) = 0
+ lab(9)  = beta2   pdf(9) = NT hyp(1, 9) = 0 hyp(2,9) = 0 hyp(3,9) = 0 hyp(4,9) = 0
+ lab(10)  = beta3   pdf(10) = NT hyp(1, 10) = 0 hyp(2,10) = 0 hyp(3,10) = 0 hyp(4,10) = 0
+ lab(11)  = beta4   pdf(11) = NT hyp(1, 11) = 0 hyp(2,11) = 0 hyp(3,11) = 0 hyp(4,11) = 0
+ lab(12) = gamu1  pdf(12) = NT hyp(1, 12) = 0 hyp(2,12) = 0 hyp(3,12) = 0 hyp(4,12) = 0
+ lab(13) = gamu2  pdf(13) = NT hyp(1, 13) = 0 hyp(2,13) = 0 hyp(3,13) = 0 hyp(4,13) = 0
+ lab(14) = gamu3  pdf(14) = NT hyp(1, 14) = 0 hyp(2,14) = 0 hyp(3,14) = 0 hyp(4,14) = 0
+ lab(15) = gamu4  pdf(15) = NT hyp(1, 15) = 0 hyp(2,15) = 0 hyp(3,15) = 0 hyp(4,15) = 0
+ lab(16) = gamu5  pdf(16) = NT hyp(1, 16) = 0 hyp(2,16) = 0 hyp(3,16) = 0 hyp(4,16) = 0
+ lab(17) = gamu6  pdf(17) = NT hyp(1, 17) = 0 hyp(2,17) = 0 hyp(3,17) = 0 hyp(4,17) = 0
+ lab(18) = gamu7  pdf(18) = NT hyp(1, 18) = 0 hyp(2,18) = 0 hyp(3,18) = 0 hyp(4,18) = 0
+ lab(19) = gamu8  pdf(19) = NT hyp(1, 19) = 0 hyp(2,19) = 0 hyp(3,19) = 0 hyp(4,19) = 0
+ lab(20) = gamu9  pdf(20) = NT hyp(1, 20) = 0 hyp(2,20) = 0 hyp(3,20) = 0 hyp(4,20) = 0
+ lab(21) = gamu10  pdf(21) = NT hyp(1, 21) = 0 hyp(2,21) = 0 hyp(3,21) = 0 hyp(4,21) = 0
+ lab(22) = phislope pdf(22) = NT hyp(1, 22) = 0 hyp(2,22) = 0 hyp(3,22) = 0 hyp(4,22) = 0
+ lab(23) = phiw1  pdf(23) = NT hyp(1,23) = 0 hyp(2,23) = 0 hyp(3,23) = 0 hyp(4,23) = 0.97
+ lab(24) = phiw2  pdf(24) = NT hyp(1,24) = 0 hyp(2,24) = 0 hyp(3,24) = 0 hyp(4,24) = 0
+ lab(25) = muw    pdf(25) = NT hyp(1,25) = 0 hyp(2,25) = 0 hyp(3,25) = -1 hyp(4,25) = 1
+ lab(26)  = Vw    pdf(26) = IG hyp(1, 26) = 0 hyp(2,26) = 0 hyp(3,26) = 0.00000001 hyp(4,26) = 4.18561966638578E-04
+ lab(27) = ma1    pdf(27) = NT hyp(1,27) = 0 hyp(2,27) = 0 hyp(3,27) = 0 hyp(4,27) = 0
+ lab(28) = gamw1   pdf(28) = NT hyp(1, 28) = 0 hyp(2,28) = 0 hyp(3,28) = 0 hyp(4,28) = 0
+ lab(29) = gamw2   pdf(29) = NT hyp(1, 29) = 0 hyp(2,29) = 0 hyp(3,29) = 0 hyp(4,29) = 0
+ lab(30) = gamw3   pdf(30) = NT hyp(1, 30) = 0 hyp(2,30) = 0 hyp(3,30) = 0 hyp(4,30) = 0
+ lab(31) = gamw4   pdf(31) = NT hyp(1, 31) = 0 hyp(2,31) = 0 hyp(3,31) = 0 hyp(4,31) = 0
+ lab(32) = gamw5   pdf(32) = NT hyp(1, 32) = 0 hyp(2,32) = 0 hyp(3,32) = 0 hyp(4,32) = 0
+ lab(33) = gamw6   pdf(33) = NT hyp(1, 33) = 0 hyp(2,33) = 0 hyp(3,33) = 0 hyp(4,33) = 0
+ lab(34) = gamw7   pdf(34) = NT hyp(1, 34) = 0 hyp(2,34) = 0 hyp(3,34) = 0 hyp(4,34) = 0
+ lab(35) = gamw8   pdf(35) = NT hyp(1, 35) = 0 hyp(2,35) = 0 hyp(3,35) = 0 hyp(4,35) = 0
+ lab(36) = gamw9   pdf(36) = NT hyp(1, 36) = 0 hyp(2,36) = 0 hyp(3,36) = 0 hyp(4,36) = 0
+ lab(37) = gamw10   pdf(37) = NT hyp(1, 37) = 0 hyp(2,37) = 0 hyp(3,37) = 0 hyp(4,37) = 0
+&end
+&mcmc
+ seed = 0 thin = 1 burnin = 1000 simulrec = 10000 Marglik = y output = S
+&end
+&GAP
+ label = 2 ARord = 2 1 MAord = 0
+ lagvar = 3 Nexog = 0 0 0
+ Inter = 3
+ ARX   = 1
+ Anchor = 15.7397 8 UNC = 0
+ Startyear = 1963 Frequency = 1 Startperiod = 1
+&end
