@@ -1,5 +1,0 @@
-last year of data,changey,2020,1
-number of forecasting years,yf,20,1
-number of year for mechanical closure,clos_nb_y,10,1
-Year from which to start the output data,OutputStartingYear,2020,1
-coefficient for productivity share,alpha,3.00,0.05
