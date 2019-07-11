@@ -1,4 +1,4 @@
-"""
+﻿"""
 # --------------------------------------------------------------------------------------------------------
 # 
 # Modified version of code written by C.Planas and A.Rossi at 
@@ -19,7 +19,7 @@
 # Run gap50.dll
 
 
-def rungap50(country, data, prg_params, adjfact, vintage_name, changey, path, tipo, logfile):
+def rungap50(country, data, adjfact, vintage_name, changey, path, tipo, logfile):
     import ctypes as ct
     import numpy as np
     import pandas as pd
@@ -32,13 +32,13 @@ def rungap50(country, data, prg_params, adjfact, vintage_name, changey, path, ti
 
     with open(logfile, 'a') as f:
         f.write('\n---computing ' + tipo.upper() + ' for '+ country.upper() + ' via GAP50.DLL v.' + dllversion)
-
     lib = ct.CDLL(projpath+"lib/"+dllversion)
 
     gap50 = getattr(lib, "pytogap")
 
     # Read Namelist
-    nml    = f90nml.read(projpath+'priors/'+tipo.upper()+'_DLL_'+country.upper()+'_'+vintage_name.replace('final','')+'.nml')
+    nml    = f90nml.read(projpath + 'priors/' + tipo.upper() + '_DLL_' + country.upper() + '_'
+                         + vintage_name.replace('final','') + '.nml')
     nmlstr = str(nml)
     nt   = len(nml['prior']['lab'])       # number of parameters
     ny   = len(nml['ssm']['endogenous'])  # number of endogenous series
@@ -134,7 +134,8 @@ def rungap50(country, data, prg_params, adjfact, vintage_name, changey, path, ti
         f.write('\n-----Variable list : ' + str(name_vars))
 
     gap50(nstring, arr, nobsp, nyp, nzp, nfp, horp, ntp, np.ctypeslib.as_ctypes(yk), np.ctypeslib.as_ctypes(unobs),
-          np.ctypeslib.as_ctypes(ac), np.ctypeslib.as_ctypes(param), np.ctypeslib.as_ctypes(marginal), np.ctypeslib.as_ctypes(margl))
+          np.ctypeslib.as_ctypes(ac), np.ctypeslib.as_ctypes(param), np.ctypeslib.as_ctypes(marginal),
+          np.ctypeslib.as_ctypes(margl))
 
     handle = lib._handle
     FreeLibrary(handle)
@@ -162,9 +163,11 @@ def rungap50(country, data, prg_params, adjfact, vintage_name, changey, path, ti
     if tipo=='nawru':
 
         if nml['GAP']['Anchor'][1] < 0:
-            nawru_series = pd.Series(unobs[3,0:nmax-ismax+nf]+adjfact[country.lower()], index=range(changey+1-nmax+ismax, changey+nf+1)).rename('NAWRU')
+            nawru_series = pd.Series(unobs[3,0:nmax-ismax+nf]+adjfact[country.lower()],
+                                     index=range(changey+1-nmax+ismax, changey+nf+1)).rename('NAWRU')
         else:
-            nawru_series = pd.Series(unobs[22,0:nmax-ismax+nf]+adjfact[country.lower()], index=range(changey+1-nmax+ismax, changey+nf+1)).rename('NAWRU')
+            nawru_series = pd.Series(unobs[22,0:nmax-ismax+nf]+adjfact[country.lower()],
+                                     index=range(changey+1-nmax+ismax, changey+nf+1)).rename('NAWRU')
 
         with open(logfile, 'a') as f:
             f.write('->PASSED')

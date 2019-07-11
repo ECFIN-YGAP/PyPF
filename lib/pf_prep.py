@@ -1,21 +1,18 @@
 
 
-def pf_prep(country, ameco, data, prg_params, country_params, changey, yf, olslog):
+def pf_prep(country, ameco, data, prg_params, country_params, changey, yf, projpath, olslog_path):
     import pandas as pd
     import numpy as np
-    from ols_ar import ols_ar
-    from closure import closure
+    import ols_ar
+    import closure
     import statsmodels.api as sm
-    import os, sys
-    projpath = os.path.dirname(sys.argv[0]) + '/'
     europop = pd.read_excel(projpath + prg_params.loc['popFile', 'value'], sheet_name="to rats", header=0, index_col=0)
     europop = europop.T
     # NOTE : the europop file as years as string (excel formula) -> convert index to integer on the fly
     europop.index = europop.index.astype('int64')
-    clos_nb_year = int(prg_params.loc['clos_nb_y','value'])
     ones = pd.Series(1., index=range(1960, changey + 11))
     ratio_cb = pd.Series(np.nan, index=range(1960, changey + 11))
-    alpha = .65
+    alpha = float(prg_params.loc['alpha', 'value'])
     clos_nb_y = int(prg_params.loc['clos_nb_y', 'value'])
     starthp = int(country_params.loc['starthp', country])
     # CALCULATE ACTUAL VARIABLES
@@ -76,7 +73,7 @@ def pf_prep(country, ameco, data, prg_params, country_params, changey, yf, olslo
 
     if country == 'de':
         #	 participation rates of migrants and non-migrants
-        MigrationDE = pd.read_excel(prg_params.loc['MigrationFile', 'value'], header=0, index_col=0)
+        MigrationDE = pd.read_excel(projpath + prg_params.loc['MigrationFile', 'value'], header=0, index_col=0)
         partM = MigrationDE['DE_PARTM'] * 100 * ones
         for i in range(changey + 4, changey + yf + 1):
             partM[i] = partM[i - 1] + 0.5 * (partM[i - 1] - partM[i - 2]) + 0.5 * (partM[i - 2] - partM[i - 3])
@@ -108,9 +105,9 @@ def pf_prep(country, ameco, data, prg_params, country_params, changey, yf, olslo
         starthp = part.first_valid_index()
 
     time = bool(int(country_params.loc['part_timexog', country]))
-    with open(olslog, 'a') as f:
+    with open(olslog_path, 'a') as f:
         f.write('\n\n\n - - -PART OLS_AR\n')
-    part = ols_ar(part, nblag, const, ar_start, changey, yf, olslog, time)
+    part = ols_ar.ols_ar(part, nblag, const, ar_start, changey, yf, olslog_path, time)
 
     # filter the forecasted series
     if country == 'de':
@@ -159,9 +156,9 @@ def pf_prep(country, ameco, data, prg_params, country_params, changey, yf, olslo
         nblag = 2
         const = True
         ar_start = 1965
-        with open(olslog, 'a') as f:
+        with open(olslog_path, 'a') as f:
             f.write('\n\n\n - - -LURHARM OLS_AR\n')
-        lurharm = ols_ar(lurharm, nblag, const, ar_start, changey, yf, olslog)
+        lurharm = ols_ar.ols_ar(lurharm, nblag, const, ar_start, changey, yf, olslog_path)
         cycle, lurharms = sm.tsa.filters.hpfilter(lurharm.loc[starthp:changey + yf], 10)
 
         lurharms[changey + 1] = lurharms[changey] + .5 * (lurharms[changey] - lurharms[changey - 1])
@@ -182,9 +179,9 @@ def pf_prep(country, ameco, data, prg_params, country_params, changey, yf, olslo
     ar_start = int(country_params.loc['hpere_ar_start', country])
 
     # print('\nExtending HPERE :\n-----------------')
-    with open(olslog, 'a') as f:
+    with open(olslog_path, 'a') as f:
         f.write('\n\n\n - - -HPERE OLS_AR\n')
-    data['hpere'] = ols_ar(data['hpere'], nblag, const, ar_start, changey, yf, olslog)
+    data['hpere'] = ols_ar.ols_ar(data['hpere'], nblag, const, ar_start, changey, yf, olslog_path)
 
     starthp = int(country_params.loc['starthp', country])
     # filter the forecasted series
@@ -204,9 +201,9 @@ def pf_prep(country, ameco, data, prg_params, country_params, changey, yf, olslo
         nblag = 2
         const = False
         ar_start = 1978
-        with open(olslog, 'a') as f:
+        with open(olslog_path, 'a') as f:
             f.write('\n\n\n - - -RATIO CB OLS_AR\n')
-        ratio_cb = ols_ar(ratio_cb, nblag, const, ar_start, changey, yf, olslog)
+        ratio_cb = ols_ar.ols_ar(ratio_cb, nblag, const, ar_start, changey, yf, olslog_path)
         cycle, ratio_cb_hp = sm.tsa.filters.hpfilter(ratio_cb.loc[starthp:changey + yf], 10)
         # extend the related series
         l_lux = part / 100 * popw * (1 - lurharm / 100)
@@ -248,9 +245,9 @@ def pf_prep(country, ameco, data, prg_params, country_params, changey, yf, olslo
     ar_start = int(country_params.loc['iypot_ar_start', country])
 
     # print('\nExtending IYPOT :\n-----------------')
-    with open(olslog, 'a') as f:
+    with open(olslog_path, 'a') as f:
         f.write('\n\n\n - - -IYPOT OLS_AR\n')
-    iypot = ols_ar(iypot, nblag, const, ar_start, changey, yf, olslog)
+    iypot = ols_ar.ols_ar(iypot, nblag, const, ar_start, changey, yf, olslog_path)
 
 
 
@@ -259,7 +256,7 @@ def pf_prep(country, ameco, data, prg_params, country_params, changey, yf, olslo
     ygap = 100 * (data['y'] / ypot - 1)
 
     # TODO
-    ygap = closure(ygap, clos_nb_y, changey)
+    ygap = closure.closure(ygap, clos_nb_y, changey)
 
     # other GAP closure rules (totalh_mt)
     # -----------
@@ -278,9 +275,9 @@ def pf_prep(country, ameco, data, prg_params, country_params, changey, yf, olslo
 
     # close each gap (by the end of the period = 6)
 
-    partgap = closure(partgap, clos_nb_y, changey)
-    hperegap = closure(hperegap, clos_nb_y, changey)
-    lurgap = closure(lurgap, clos_nb_y, changey)
+    partgap = closure.closure(partgap, clos_nb_y, changey)
+    hperegap = closure.closure(hperegap, clos_nb_y, changey)
+    lurgap = closure.closure(lurgap, clos_nb_y, changey)
 
     # fill in the medium term actual series
     # TODO define a function to do so ?
