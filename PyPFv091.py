@@ -4,7 +4,7 @@
                          #     PyPFOG v0.9     #
                          #---------------------#
 
-NOTE : The program itself begins at line 165, after some introduction, libraries import,
+NOTE : The program itself begins at line 166, after some introduction, libraries import,
                                                                         parameters + data reading and file creations!
 
 @author: François Blondeau (European Commisssion, Directorate-General for Economic and Financial Affairs)
@@ -45,11 +45,11 @@ Python is open source and royalty-free.
 import datetime
 import numpy as np
 current1 = np.datetime64(datetime.datetime.now())
-import os, sys
+import os, sys, inspect
 from scipy.optimize import fsolve
 import pandas as pd
 from pandas import ExcelWriter
-gap_path = os.path.dirname(sys.argv[0])
+gap_path = os.path.dirname(os.path.abspath(inspect.stack()[0][1]))
 projpath = gap_path + '/'
 sys.path.insert(0, projpath + 'lib/')
 import jrc_tools
@@ -118,12 +118,14 @@ countrylist = countrylist[2:]
 # the description of each parameter is detailed in the Excel file
 changey = int(prg_params.loc['changey', 'value'])  # last year of the short term forecast
 yf = int(prg_params.loc['yf','value'])
+alpha = float(prg_params.loc['alpha', 'value'])
 # clos_nb_year (number of year to close the YGAP) is normally 3 years and correspond to the mid term "horizon"
 # the variable is used as well to set the end year for output writing (short term + mid term = t+5)
 clos_nb_y = int(prg_params.loc['clos_nb_y', 'value'])
 OutStartYear = int(prg_params.loc['OutputStartingYear', 'value'])
 vintage_name = prg_params.loc['vintage_name','value']
 ones = pd.Series(1., index=range(1960, changey + yf + 1))
+ygap_passed = 0
 
 # -------------------------------------------------
 #               MAIN DATA FILES READING
@@ -146,7 +148,7 @@ except:
 #               OUTPUT INITIALISATION
 # -------------------------------------------------
 
-outputfile = ExcelWriter(projpath+prg_params.loc['out_dir','value']+'/PyPFOG_output_'+vintage_name+'.xlsx')
+outputfile = ExcelWriter(projpath+'output/PyPFOG_output_'+vintage_name+'.xlsx')
 ones.loc[OutStartYear:changey+clos_nb_y].to_excel(outputfile, sheet_name=prgversion+'_'+vintage_name,startcol=0,
                                                   index=True, index_label='YEAR')
 excelcolumn = 1
@@ -191,7 +193,7 @@ for country in countrylist:
         adjfact = []
         gaptimer = np.datetime64(datetime.datetime.now())
         pf_data = pd.concat([pf_data,
-                             jrc_tools.rungap50(country, pf_data, prg_params, adjfact, vintage_name, changey,
+                             jrc_tools.rungap50(country, pf_data, adjfact, vintage_name, changey,
                                                 gap_path, est_type, logfile)], axis=1)
         with open(logfile, 'a') as f:
             f.write(' Time spend for computations : '+str(np.datetime64(datetime.datetime.now())-gaptimer))
@@ -229,7 +231,7 @@ for country in countrylist:
         est_type = 'nawru'
         adjfact = gap_params['Adjustment Factor']
         gaptimer = np.datetime64(datetime.datetime.now())
-        pf_data = pd.concat([pf_data, jrc_tools.rungap50(country, pf_data, prg_params, adjfact, vintage_name, changey,
+        pf_data = pd.concat([pf_data, jrc_tools.rungap50(country, pf_data, adjfact, vintage_name, changey,
                                                          gap_path, est_type, logfile)], axis=1)
         with open(logfile, 'a') as f:
             f.write(' Time spend for computations : '+str(np.datetime64(datetime.datetime.now())-gaptimer))
@@ -269,7 +271,7 @@ for country in countrylist:
                 f.write('\n-----NO YGAP estimation possible')
             continue
 
-        pf_data = pf_prep.pf_prep(country, ameco, pf_data, prg_params, country_params, changey, yf, olslog)
+        pf_data = pf_prep.pf_prep(country, ameco, pf_data, prg_params, country_params, changey, yf, projpath, olslog)
 
 # Some data is extracted from the main DataFrame for ease of code reading
         ypot = pf_data['ypot']
@@ -288,7 +290,7 @@ for country in countrylist:
 
         for t in range (changey + 1, changey + clos_nb_y + 1):
             params = [totalhs[t], srkf[t], dep[t], k[t - 1], iypot[t],
-                      ygap[t], totalh_mt[t]]
+                      ygap[t], totalh_mt[t], alpha]
             x0 = fsolve(modeltosolve.modeltosolve, x0, params)
             ypot[t], k[t], iq[t], y[t], sr[t] = x0
 
@@ -330,6 +332,7 @@ for country in countrylist:
         output.loc[OutStartYear:changey + clos_nb_y].to_excel(outputfile, sheet_name=prgversion + '_' + vintage_name,
                                                               startcol=excelcolumn, index=False)
         excelcolumn += 24
+        ygap_passed += 1
         with open(logfile, 'a') as f:
             f.write(' ->PASSED')
 
@@ -345,9 +348,9 @@ nawru_output.loc[OutStartYear:changey].to_excel(nawru_file, sheet_name=prgversio
 nawru_file.close()
 
 with open(logfile, 'a') as f:
-    f.write("\n\nYGAP ESTIMATIONS ->PASSED for " + str(
-        len(pf_countrylist)) + " countries.\nTime spend for the total program run : " + str(
-        np.datetime64(datetime.datetime.now()) - current1))
+    f.write("\n\nYGAP ESTIMATIONS ->PASSED for " + str(ygap_passed) +
+            " countries.\nTime spend for the total program run : "
+            + str(np.datetime64(datetime.datetime.now()) - current1))
 
 # ------------------------------------------------------------
 #                    THIS IS THE END
