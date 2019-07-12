@@ -234,7 +234,6 @@ def pf_prep(country, ameco, data, prg_params, country_params, changey, yf, projp
     srkf_level = np.exp(data['SRKF'])
     ypot = totalhs ** alpha * data['k'] ** (1 - alpha) * srkf_level
     # ypot = ypot * ones
-
     iypot = 100 * (data['iq'] / ypot)
     iypot = iypot * ones
 

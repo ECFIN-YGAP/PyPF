@@ -4,7 +4,7 @@
 # Modified version of code written by C.Planas and A.Rossi at 
 # the Joint Research Centre (JRC) of the European Commission
 #
-# The original code was modified to work with Excel data files using Pandas library instead 
+# The original code was modified mainly to work with Excel data files using Pandas library instead
 # of using a tree structure (Anytree library).
 #
 #
@@ -47,7 +47,12 @@ def rungap50(country, data, adjfact, vintage_name, changey, path, tipo, logfile)
     starty = nml['GAP']['Startyear']
     stri = str(nml['ssm']['exogenous'])
     pos  = list(find_all(stri, ','))
-    nz =  len(pos) + 1                   # number of exogenous series
+
+    if len(stri) > 0:
+        nz =  len(pos) + 1                   # number of exogenous series
+    else:
+        nz = 0
+
     name_vars = list()
 
     if tipo == 'nawru':
@@ -61,9 +66,11 @@ def rungap50(country, data, adjfact, vintage_name, changey, path, tipo, logfile)
             name_vars.append('DWINF')
         else:
             name_vars.append('DRULC')
-    else:
+    # TODO : DEBUG
+    # else:
+     #   name_vars.append('CU')
+    elif ny == 2:
         name_vars.append('CU')
-
     if nz == 1:
         name_vars.append(stri.strip())
     if nz > 1:
@@ -163,10 +170,10 @@ def rungap50(country, data, adjfact, vintage_name, changey, path, tipo, logfile)
     if tipo=='nawru':
 
         if nml['GAP']['Anchor'][1] < 0:
-            nawru_series = pd.Series(unobs[3,0:nmax-ismax+nf]+adjfact[country.lower()],
+            nawru_series = pd.Series(unobs[3,0:nmax-ismax+nf] + float(adjfact[country.lower()]),
                                      index=range(changey+1-nmax+ismax, changey+nf+1)).rename('NAWRU')
         else:
-            nawru_series = pd.Series(unobs[22,0:nmax-ismax+nf]+adjfact[country.lower()],
+            nawru_series = pd.Series(unobs[22,0:nmax-ismax+nf] + float(adjfact[country.lower()]),
                                      index=range(changey+1-nmax+ismax, changey+nf+1)).rename('NAWRU')
 
         with open(logfile, 'a') as f:
@@ -219,7 +226,11 @@ def selectdata(data, changey, varnames, nmax):
     xn = np.zeros((nvar,nmax))
 
     for i in range(0,nvar):
-        xn[i,:] = data.loc[changey-nmax+1:changey, varnames[i]].values
+        # TODO : debug rounding SR is not needed but allow to match results from the forecast
+        xn[i, :] = data.loc[changey - nmax + 1:changey, varnames[i]].values
+        if varnames[i] == 'SR':
+            xn[i, :] = np.round(xn[i, :], 6)
+
         start = data[varnames[i]].loc[changey-nmax+1:changey].first_valid_index()-(changey-nmax+1)
         nobs = len(data[varnames[i]].loc[changey-nmax+1:changey])-start
         indstart.append(start)

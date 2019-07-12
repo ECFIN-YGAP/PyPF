@@ -1,6 +1,6 @@
 
 
-def sr_prep(country, ameco, cubs, country_params, changey, endy, olslog):
+def sr_prep(country, ameco, cubs, country_params, tfp_params, changey, endy, olslog):
     import numpy as np
     import pandas as pd
     import statsmodels.api as sm
@@ -148,6 +148,18 @@ def sr_prep(country, ameco, cubs, country_params, changey, endy, olslog):
     data['wsrhp'] = data['srhp'].diff()
 
     data['CU'] = cubs['CUBS_ST_' + country.upper()]
+
+    for i in range(1,6):
+        if isinstance(tfp_params.loc[country, 'Dummy ' + str(i)], str):
+            dummy = tfp_params.loc[country, 'Dummy ' + str(i)].split(':')
+            dummy_years = dummy[0].split(',')
+            dummy_value = dummy[1]
+            data['dum' + str(i)] = 0.
+            for year in dummy_years:
+                data.loc[int(year), 'dum' + str(i)] = dummy_value
+        else:
+            continue
+
     data = data.fillna(-99999.0)
 
     return data
