@@ -1,13 +1,13 @@
 &ssm 
  maxintord = 1 nonstatstate = 1 estimation = BA stderr = hes 
- endogenous(1) = 'TFP(0) = uP(0) + uG(0) + gamu1*D1(0) + gamu2*D2(0)' 
+ endogenous(1) = 'TFP(0) = uP(0) + uG(0) + gamu1*dum1(0) + gamu2*dum2(0)' 
  endogenous(2) = 'CUBS(0) = muw*CONST(0) + beta0*uG(0) + aw(0)  ' 
  states(1) = 'uP(0)  = uP(-1) + uslope(-1) + auP(0)'   
  states(2) = 'uslope(0) = drift*(1-phislope) + phislope*uslope(-1) + auslope(0)' 
  states(3) = 'uG(0) =  2.*A*cos(6.283185307179586/Tau)*uG(-1)-A**2*uG(-2) + auG(0)' 
  shocks = 'aw, auP, auslope, auG' 
  std = 'sqrt(Vw), sqrt(VuP), sqrt(Vuslope), sqrt(VuG)' 
- exogenous = 'D1,D2,CONST'
+ exogenous = 'CONST,dum1,dum2'
 &end 
 &prior 
  lab(1)  = A       pdf(1) = BE hyp(1, 1) = 3.139808170427744 hyp(2,1) =      4.300263018065756 hyp(3,1) =                      0 hyp(4,1) =                   0.99 
