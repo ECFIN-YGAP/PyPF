@@ -30,7 +30,7 @@ Python is open source and royalty-free.
 Disclaimer : The current version of the program installation process only supports the Windows platform.
 
 IMPORTANT : The GAP dll is only 64-bit and works only with 64-bit Python...
-The program will run in 32-bit version if you provide Trend TFP and NAWRU exogenously and do not specify their estimations to be made by the program.
+The program will run in Python 32-bit version if you provide Trend TFP and NAWRU exogenously and do not specify their estimations to be made by the program.
 
 1 - Go to the official miniconda download page : https://conda.io/miniconda.html
 
