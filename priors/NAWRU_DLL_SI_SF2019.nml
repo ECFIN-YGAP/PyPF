@@ -8,7 +8,7 @@
  states(4) = 'cw(0) = phiw1*cw(-1) + aw(0) ' 
  shocks = 'aw, auP, auG'
  std = 'sqrt(Vw), sqrt(VuP), sqrt(VuG)'
- exogenous = 'CONST,dum1,DDTOT'
+ exogenous = 'CONST,dum1,DTOT'
 &end
 &prior
  lab(1)  = phiG1   pdf(1) = NT hyp(1, 1) = 0 hyp(2,1) = 0 hyp(3,1) = -1.96 hyp(4,1) = 1.96
