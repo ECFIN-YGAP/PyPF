@@ -83,22 +83,22 @@ except:
 
 # Set the list of country for which we want Trend TFP estimation
 try:
-    gap_params = pd.read_excel(projpath+'start.xlsm', sheet_name='trend_tfp', header=0, index_col=0)
+    tfp_params = pd.read_excel(projpath+'start.xlsm', sheet_name='trend_tfp', header=0, index_col=0)
 except:
     print('\n----------------------------------------------------\nThe trend TFP parameters could not be read, '
           'the program will stop...\n----------------------------------------------------\n')
     sys.exit(79)
 
-tfp_countrylist=list(gap_params.loc[gap_params['DO_TrendTFP_ESTIMATES?']==True].index)
+tfp_countrylist=list(tfp_params.loc[tfp_params['DO_TrendTFP_ESTIMATES?']==True].index)
 
 # Read NAWRU adjustment factors from excel file and set the list of country for which we want NAWRU estimation
 try:
-    gap_params = pd.read_excel(projpath+'start.xlsm', sheet_name='nawru', header=0, index_col=0)
+    nawru_params = pd.read_excel(projpath+'start.xlsm', sheet_name='nawru', header=0, index_col=0)
 except:
     print('\n----------------------------------------------------\nThe NAWRU parameter could not be read, '
           'the program will stop...\n----------------------------------------------------\n')
     sys.exit(80)
-nawru_countrylist=list(gap_params.loc[gap_params['DO_NAWRU_ESTIMATES ?']==True].index)
+nawru_countrylist=list(nawru_params.loc[nawru_params['DO_NAWRU_ESTIMATES ?']==True].index)
 
 # Set the list of country for which we want YGAP estimation
 try:
@@ -186,7 +186,7 @@ for country in countrylist:
         srkf_exists = False
 
     if country in tfp_countrylist or country in pf_countrylist:
-        pf_data = pd.concat([pf_data, sr_prep.sr_prep(country, ameco, cubs, country_params, changey,
+        pf_data = pd.concat([pf_data, sr_prep.sr_prep(country, ameco, cubs, country_params, tfp_params, changey,
                                                       changey + yf, olslog)], axis=1)
     if country in tfp_countrylist:
         est_type = 'tfp'
@@ -227,9 +227,9 @@ for country in countrylist:
             lur_ok = True
         else:
             lur_ok = False
-        pf_data = pd.concat([pf_data, nawru_prep.nawru_prep(country, ameco, gap_params, changey, lur_ok)], axis=1)
+        pf_data = pd.concat([pf_data, nawru_prep.nawru_prep(country, ameco, nawru_params, changey, lur_ok)], axis=1)
         est_type = 'nawru'
-        adjfact = gap_params['Adjustment Factor']
+        adjfact = nawru_params['Adjustment Factor']
         gaptimer = np.datetime64(datetime.datetime.now())
         pf_data = pd.concat([pf_data, jrc_tools.rungap50(country, pf_data, adjfact, vintage_name, changey,
                                                          gap_path, est_type, logfile)], axis=1)
@@ -344,7 +344,8 @@ for country in countrylist:
 
 srkf_output.to_excel(srkf_file, sheet_name=prgversion+'_'+vintage_name)
 srkf_file.close()
-nawru_output.loc[OutStartYear:changey].to_excel(nawru_file, sheet_name=prgversion+'_'+vintage_name)
+# TODO : DEBUG changed output of nawru... should be up to changey
+nawru_output.loc[OutStartYear:].to_excel(nawru_file, sheet_name=prgversion+'_'+vintage_name)
 nawru_file.close()
 
 with open(logfile, 'a') as f:
