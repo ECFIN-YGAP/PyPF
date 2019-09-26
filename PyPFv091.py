@@ -1,8 +1,11 @@
 ﻿# -*- coding: utf-8 -*-
 """
+This software is licensed under EUPL v1.2
+
                          #---------------------#
                          #     PyPFOG v0.9     #
                          #---------------------#
+
 
 NOTE : The program itself begins at line 166, after some introduction, libraries import,
                                                                         parameters + data reading and file creations!
