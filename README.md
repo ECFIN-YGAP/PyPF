@@ -1,4 +1,7 @@
 # PyPF
+
+This software is licensed under EUPL v1.2
+
                                         #---------------#
                                         #     PyPF      #
                                         #---------------#
